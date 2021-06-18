@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/eoscanada/eos-go"
-	"github.com/eoscanada/eos-go/ecc"
+	"github.com/panyanyany/eos-go"
+	"github.com/panyanyany/eos-go/ecc"
 )
 
 // NewNewAccount returns a `newaccount` action that lives on the

@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"github.com/dfuse-io/logging"
-	"github.com/eoscanada/eos-go/p2p"
+	"github.com/panyanyany/eos-go/p2p"
 )
 
 var peer = flag.String("peer", "localhost:9876", "peer to connect to")
@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	if *showLog {
-		logging.Set(logging.MustCreateLogger(), "github.com/eoscanada/eos-go/p2p")
+		logging.Set(logging.MustCreateLogger(), "github.com/panyanyany/eos-go/p2p")
 	}
 	defer p2p.SyncLogger()
 
