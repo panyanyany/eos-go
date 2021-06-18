@@ -19,7 +19,9 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var symbolRegex = regexp.MustCompile("^[0-9],[A-Z]{1,7}$")
+// fix by pyy
+//var symbolRegex = regexp.MustCompile("^[0-9],[A-Z]{1,7}$")
+var symbolRegex = regexp.MustCompile("^[0-9]{1,2},[A-Z]{1,7}$")
 var symbolCodeRegex = regexp.MustCompile("^[A-Z]{1,7}$")
 
 // For reference:
