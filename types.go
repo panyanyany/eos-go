@@ -1713,3 +1713,16 @@ func (o *fcVariantBlob) UnmarshalBinary(decoder *Decoder) error {
 	*o = fcVariantBlob(blob)
 	return nil
 }
+
+func (r *Symbol) UnmarshalJSON(data []byte) (err error) {
+	str := string(data)
+	str = strings.ReplaceAll(str, "\"", "")
+	var a Symbol
+	a, err = StringToSymbol(str)
+	if err != nil {
+		err = fmt.Errorf("eos.StringToSymbol(): %w", err)
+		return
+	}
+	*r = Symbol(a)
+	return
+}
