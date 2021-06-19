@@ -310,7 +310,7 @@ func StringToSymbol(str string) (Symbol, error) {
 		return symbol, fmt.Errorf("%s is not a valid symbol", str)
 	}
 
-	precision, _ := strconv.ParseUint(string(str[0]), 10, 8)
+	precision, _ := strconv.ParseUint(strings.Split(str, ",")[0], 10, 8)
 
 	symbol.Precision = uint8(precision)
 	symbol.Symbol = str[2:]
