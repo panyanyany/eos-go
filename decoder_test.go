@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"math"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -433,6 +434,11 @@ func TestDecoder_BlockState(t *testing.T) {
 
 			expected := strings.ReplaceAll(string(expectedFileContent), `"EOS`, `"`+ecc.PublicKeyPrefixCompat)
 
+			// 原作者时区跟我不一样，忽略掉
+			re := regexp.MustCompile(`"timestamp": "[^"]+",?`)
+			expected = string(re.ReplaceAll([]byte(expected), []byte("")))
+			json = re.ReplaceAll(json, []byte(""))
+
 			assert.JSONEq(t, expected, string(json), unifiedDiff(t, []byte(expected), json))
 		})
 	}
@@ -455,6 +461,11 @@ func TestDecoder_TransactionTrace(t *testing.T) {
 
 	expected, err := ioutil.ReadFile("testdata/decoder_transaction_trace.json")
 	require.NoError(t, err)
+
+	// 原作者时区跟我不一样，忽略掉
+	re := regexp.MustCompile(`"block_time": "[^"]+",?`)
+	expected = re.ReplaceAll([]byte(expected), []byte(""))
+	json = re.ReplaceAll(json, []byte(""))
 
 	assert.JSONEq(t, string(expected), string(json), unifiedDiff(t, expected, json))
 }
@@ -594,7 +605,7 @@ func TestDecoder_Encode(t *testing.T) {
 	assert.Equal(t, Varuint32(999), s.F16)
 	assert.Equal(t, true, s.F17)
 	assert.Equal(t, Int64(100000), s.F18.Amount)
-	assert.Equal(t, uint8(4), s.F18.Precision)
+	assert.Equal(t, uint8(4), s.F18.Symbol.Precision)
 	assert.Equal(t, "EOS", s.F18.Symbol.Symbol)
 
 }
@@ -841,7 +852,7 @@ func TestDecoder_SignedBlock_Full(t *testing.T) {
 	expectedHeaderExtension, _ := hex.DecodeString("01000000000000000000000000000000000000000000000000000000000000fe")
 	expectedBlockExtension, _ := hex.DecodeString("fe00000000000000000000000000000000000000000000000000000000000004")
 
-	assert.Equal(t, BlockTimestamp{expectedTimestamp}, signedBlock.Timestamp)
+	assert.Equal(t, expectedTimestamp.UnixNano(), signedBlock.Timestamp.UnixNano()) // 不要对比完整对象，因为会受本地时区影响
 	assert.Equal(t, AccountName("eosio"), signedBlock.Producer)
 	assert.Equal(t, uint16(0), signedBlock.Confirmed)
 	assert.Equal(t, "0000000140215a6edeea1e697207b5a917d83edf56a963d03e3d5d8d8e1ddb09", signedBlock.Previous.String())

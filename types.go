@@ -224,7 +224,7 @@ func (b *Bool) UnmarshalJSON(data []byte) error {
 // NOTE: there's also ExtendedAsset which is a quantity with the attached contract (AccountName)
 type Asset struct {
 	Amount Int64
-	Symbol
+	Symbol Symbol
 }
 
 func (a Asset) Add(other Asset) Asset {
@@ -239,6 +239,12 @@ func (a Asset) Sub(other Asset) Asset {
 		panic("Sub applies only to assets with the same symbol")
 	}
 	return Asset{Amount: a.Amount - other.Amount, Symbol: a.Symbol}
+}
+func (a Asset) ToFloat() *big.Float {
+	f := new(big.Float)
+	f.SetInt64(int64(a.Amount))
+
+	return new(big.Float).Quo(f, new(big.Float).SetFloat64(math.Pow(10, float64(a.Symbol.Precision))))
 }
 
 func (a Asset) String() string {
@@ -309,11 +315,11 @@ func StringToSymbol(str string) (Symbol, error) {
 	if !symbolRegex.MatchString(str) {
 		return symbol, fmt.Errorf("%s is not a valid symbol", str)
 	}
-
-	precision, _ := strconv.ParseUint(strings.Split(str, ",")[0], 10, 8)
+	parts := strings.Split(str, ",")
+	precision, _ := strconv.ParseUint(parts[0], 10, 8)
 
 	symbol.Precision = uint8(precision)
-	symbol.Symbol = str[2:]
+	symbol.Symbol = parts[1]
 
 	return symbol, nil
 }

@@ -1160,7 +1160,7 @@ func (d *Decoder) ReadAsset() (out Asset, err error) {
 
 	out = Asset{}
 	out.Amount = Int64(amount)
-	out.Precision = precision
+	out.Symbol.Precision = precision
 	out.Symbol.Symbol = strings.TrimRight(string(data), "\x00")
 	if traceEnabled {
 		zlog.Debug("read asset", zap.Stringer("value", out))

@@ -523,7 +523,7 @@ func (e *Encoder) writeAsset(asset Asset) (err error) {
 		zlog.Debug("write asset", zap.Stringer("value", asset))
 	}
 	e.writeUint64(uint64(asset.Amount))
-	e.writeByte(asset.Precision)
+	e.writeByte(asset.Symbol.Precision)
 
 	symbol := make([]byte, 7, 7)
 
