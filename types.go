@@ -470,14 +470,23 @@ func NewAssetFromFloat(in *big.Float, symbol Symbol) (out Asset, err error) {
 	var accuracy big.Accuracy
 
 	amount, accuracy = in.Int64()
-	if accuracy != big.Exact {
-		err = fmt.Errorf("input amount not Exact: %v", in)
+	if amount == math.MaxInt64 {
+		err = fmt.Errorf("input amount too large: %v", in)
+		return
+	}
+	if amount == math.MinInt64 {
+		err = fmt.Errorf("input amount too small: %v", in)
 		return
 	}
 
 	amount, accuracy = new(big.Float).Mul(in, new(big.Float).SetFloat64(math.Pow(10, float64(symbol.Precision)))).Int64()
-	if accuracy != big.Exact {
-		err = fmt.Errorf("result amount not Exact: %v", amount)
+	_ = accuracy
+	if amount == math.MaxInt64 {
+		err = fmt.Errorf("result amount too large: %v", in)
+		return
+	}
+	if amount == math.MinInt64 {
+		err = fmt.Errorf("result amount too small: %v", in)
 		return
 	}
 	out = Asset{
