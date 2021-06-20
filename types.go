@@ -465,6 +465,28 @@ func NewAssetFromString(in string) (out Asset, err error) {
 	return
 }
 
+func NewAssetFromFloat(in *big.Float, symbol Symbol) (out Asset, err error) {
+	var amount int64
+	var accuracy big.Accuracy
+
+	amount, accuracy = in.Int64()
+	if accuracy != big.Exact {
+		err = fmt.Errorf("input amount not Exact: %v", in)
+		return
+	}
+
+	amount, accuracy = new(big.Float).Mul(in, new(big.Float).SetFloat64(math.Pow(10, float64(symbol.Precision)))).Int64()
+	if accuracy != big.Exact {
+		err = fmt.Errorf("result amount not Exact: %v", amount)
+		return
+	}
+	out = Asset{
+		Amount: Int64(amount),
+		Symbol: symbol,
+	}
+	return
+}
+
 func NewEOSAssetFromString(input string) (Asset, error) {
 	return NewFixedSymbolAssetFromString(EOSSymbol, input)
 }
