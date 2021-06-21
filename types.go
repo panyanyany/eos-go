@@ -277,6 +277,15 @@ func (a Asset) String() string {
 type ExtendedAsset struct {
 	Asset    Asset       `json:"quantity"`
 	Contract AccountName `json:"contract"`
+
+	key string
+}
+
+func (r *ExtendedAsset) GetKey() string {
+	if r.key == "" {
+		r.key = fmt.Sprintf("%v-%v", r.Contract.String(), r.Asset.Symbol.String())
+	}
+	return r.key
 }
 
 // NOTE: there's also a new ExtendedSymbol (which includes the contract (as AccountName) on which it is)
