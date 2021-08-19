@@ -246,6 +246,19 @@ func (a Asset) ToFloat() *big.Float {
 
 	return new(big.Float).Quo(f, new(big.Float).SetFloat64(math.Pow(10, float64(a.Symbol.Precision))))
 }
+func (a Asset) Div(b Asset) (c Asset) {
+	if a.Symbol != b.Symbol {
+		panic("Div applies only to assets with the same symbol")
+	}
+	c.Amount = a.Amount / b.Amount
+	c.Symbol = a.Symbol
+	return
+}
+func (a Asset) DivAsset(b Asset) *big.Float {
+	af := a.ToFloat()
+	bf := b.ToFloat()
+	return new(big.Float).Quo(af, bf)
+}
 
 func (a Asset) String() string {
 	amt := a.Amount
